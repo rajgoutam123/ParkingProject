@@ -1,0 +1,4 @@
+USE payment_service_db;
+
+INSERT INTO payments (payment_id, booking_id, user_id, amount, payment_status) VALUES
+(UUID(), '<booking_id_from_above>', '<John_Doe_user_id>', 10.00, 'SUCCESS');
