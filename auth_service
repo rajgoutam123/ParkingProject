@@ -1,0 +1,6 @@
+USE auth_service_db;
+
+INSERT INTO users (user_id, name, email, phone, password_hash, role) VALUES
+(UUID(), 'John Doe', 'john@example.com', '9876543210', 'hashedpassword123', 'USER'),
+(UUID(), 'Jane Smith', 'jane@example.com', '9876543211', 'hashedpassword456', 'LOT_MANAGER'),
+(UUID(), 'Admin User', 'admin@example.com', '9876543212', 'hashedpasswordadmin', 'ADMIN');
