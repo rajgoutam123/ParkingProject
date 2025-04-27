@@ -1,0 +1,4 @@
+USE booking_service_db;
+
+INSERT INTO bookings (booking_id, user_id, spot_id, booking_time, start_time, end_time, status) VALUES
+(UUID(), '<John_Doe_user_id>', '<spot_id_A1>', CURRENT_TIMESTAMP, NOW(), DATE_ADD(NOW(), INTERVAL 2 HOUR), 'CONFIRMED');
