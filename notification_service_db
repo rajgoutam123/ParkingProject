@@ -1,0 +1,4 @@
+USE notification_service_db;
+
+INSERT INTO notifications (notification_id, user_id, message, status) VALUES
+(UUID(), '<John_Doe_user_id>', 'Your booking has been confirmed!', 'SENT');
