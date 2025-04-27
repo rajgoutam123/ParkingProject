@@ -1,0 +1,41 @@
+USE auth_service_db;
+
+INSERT INTO users (user_id, name, email, phone, password_hash, role) VALUES
+(UUID(), 'John Doe', 'john@example.com', '9876543210', 'hashedpassword123', 'USER'),
+(UUID(), 'Jane Smith', 'jane@example.com', '9876543211', 'hashedpassword456', 'LOT_MANAGER'),
+(UUID(), 'Admin User', 'admin@example.com', '9876543212', 'hashedpasswordadmin', 'ADMIN');
+
+
+
+USE parking_service_db;
+
+-- Insert Parking Lots
+INSERT INTO parking_lots (lot_id, name, address, manager_id) VALUES
+(UUID(), 'Downtown Parking Lot', '123 Main Street', '<Jane_Smith_user_id>'),
+(UUID(), 'Airport Parking Lot', 'Airport Road', '<Jane_Smith_user_id>');
+
+-- Insert Parking Spots
+INSERT INTO parking_spots (spot_id, lot_id, location, price_per_hour, is_available) VALUES
+(UUID(), (SELECT lot_id FROM parking_lots WHERE name = 'Downtown Parking Lot'), 'A1', 5.00, TRUE),
+(UUID(), (SELECT lot_id FROM parking_lots WHERE name = 'Downtown Parking Lot'), 'A2', 6.00, TRUE),
+(UUID(), (SELECT lot_id FROM parking_lots WHERE name = 'Airport Parking Lot'), 'B1', 8.00, TRUE);
+
+
+USE booking_service_db;
+
+INSERT INTO bookings (booking_id, user_id, spot_id, booking_time, start_time, end_time, status) VALUES
+(UUID(), '<John_Doe_user_id>', '<spot_id_A1>', CURRENT_TIMESTAMP, NOW(), DATE_ADD(NOW(), INTERVAL 2 HOUR), 'CONFIRMED');
+
+
+
+USE payment_service_db;
+
+INSERT INTO payments (payment_id, booking_id, user_id, amount, payment_status) VALUES
+(UUID(), '<booking_id_from_above>', '<John_Doe_user_id>', 10.00, 'SUCCESS');
+
+
+
+USE notification_service_db;
+
+INSERT INTO notifications (notification_id, user_id, message, status) VALUES
+(UUID(), '<John_Doe_user_id>', 'Your booking has been confirmed!', 'SENT');
