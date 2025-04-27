@@ -1,0 +1,12 @@
+USE parking_service_db;
+
+-- Insert Parking Lots
+INSERT INTO parking_lots (lot_id, name, address, manager_id) VALUES
+(UUID(), 'Downtown Parking Lot', '123 Main Street', '<Jane_Smith_user_id>'),
+(UUID(), 'Airport Parking Lot', 'Airport Road', '<Jane_Smith_user_id>');
+
+-- Insert Parking Spots
+INSERT INTO parking_spots (spot_id, lot_id, location, price_per_hour, is_available) VALUES
+(UUID(), (SELECT lot_id FROM parking_lots WHERE name = 'Downtown Parking Lot'), 'A1', 5.00, TRUE),
+(UUID(), (SELECT lot_id FROM parking_lots WHERE name = 'Downtown Parking Lot'), 'A2', 6.00, TRUE),
+(UUID(), (SELECT lot_id FROM parking_lots WHERE name = 'Airport Parking Lot'), 'B1', 8.00, TRUE);
