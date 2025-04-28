@@ -1,4 +1,13 @@
+CREATE DATABASE payment_service_db;
+
 USE payment_service_db;
 
-INSERT INTO payments (payment_id, booking_id, user_id, amount, payment_status) VALUES
-(UUID(), '<booking_id_from_above>', '<John_Doe_user_id>', 10.00, 'SUCCESS');
+CREATE TABLE payments (
+    payment_id CHAR(36) PRIMARY KEY,
+    booking_id CHAR(36) NOT NULL,
+    user_id CHAR(36) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    payment_status ENUM('PENDING', 'SUCCESS', 'FAILED') DEFAULT 'PENDING',
+    FOREIGN KEY (booking_id) REFERENCES booking_service_db.bookings(booking_id),
+    FOREIGN KEY (user_id) REFERENCES auth_service_db.users(user_id)
+);
