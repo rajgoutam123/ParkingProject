@@ -1,4 +1,15 @@
+CREATE DATABASE booking_service_db;
+
 USE booking_service_db;
 
-INSERT INTO bookings (booking_id, user_id, spot_id, booking_time, start_time, end_time, status) VALUES
-(UUID(), '<John_Doe_user_id>', '<spot_id_A1>', CURRENT_TIMESTAMP, NOW(), DATE_ADD(NOW(), INTERVAL 2 HOUR), 'CONFIRMED');
+CREATE TABLE bookings (
+    booking_id CHAR(36) PRIMARY KEY,
+    user_id CHAR(36) NOT NULL,
+    spot_id CHAR(36) NOT NULL,
+    booking_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    status ENUM('CONFIRMED', 'CANCELLED') DEFAULT 'CONFIRMED',
+    FOREIGN KEY (user_id) REFERENCES auth_service_db.users(user_id),
+    FOREIGN KEY (spot_id) REFERENCES parking_service_db.parking_spots(spot_id)
+);
