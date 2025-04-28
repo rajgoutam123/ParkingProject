@@ -1,6 +1,12 @@
+CREATE DATABASE auth_service_db;
+
 USE auth_service_db;
 
-INSERT INTO users (user_id, name, email, phone, password_hash, role) VALUES
-(UUID(), 'John Doe', 'john@example.com', '9876543210', 'hashedpassword123', 'USER'),
-(UUID(), 'Jane Smith', 'jane@example.com', '9876543211', 'hashedpassword456', 'LOT_MANAGER'),
-(UUID(), 'Admin User', 'admin@example.com', '9876543212', 'hashedpasswordadmin', 'ADMIN');
+CREATE TABLE users (
+    user_id CHAR(36) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(15),
+    password_hash VARCHAR(255) NOT NULL,
+    role ENUM('USER', 'ADMIN', 'LOT_MANAGER') NOT NULL
+);
