@@ -1,4 +1,12 @@
+CREATE DATABASE notification_service_db;
+
 USE notification_service_db;
 
-INSERT INTO notifications (notification_id, user_id, message, status) VALUES
-(UUID(), '<John_Doe_user_id>', 'Your booking has been confirmed!', 'SENT');
+CREATE TABLE notifications (
+    notification_id CHAR(36) PRIMARY KEY,
+    user_id CHAR(36) NOT NULL,
+    message TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('SENT', 'PENDING') DEFAULT 'PENDING',
+    FOREIGN KEY (user_id) REFERENCES auth_service_db.users(user_id)
+);
