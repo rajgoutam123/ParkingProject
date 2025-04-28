@@ -1,12 +1,19 @@
+CREATE DATABASE parking_service_db;
+
 USE parking_service_db;
 
--- Insert Parking Lots
-INSERT INTO parking_lots (lot_id, name, address, manager_id) VALUES
-(UUID(), 'Downtown Parking Lot', '123 Main Street', '<Jane_Smith_user_id>'),
-(UUID(), 'Airport Parking Lot', 'Airport Road', '<Jane_Smith_user_id>');
+CREATE TABLE parking_lots (
+    lot_id CHAR(36) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    manager_id CHAR(36) NOT NULL
+);
 
--- Insert Parking Spots
-INSERT INTO parking_spots (spot_id, lot_id, location, price_per_hour, is_available) VALUES
-(UUID(), (SELECT lot_id FROM parking_lots WHERE name = 'Downtown Parking Lot'), 'A1', 5.00, TRUE),
-(UUID(), (SELECT lot_id FROM parking_lots WHERE name = 'Downtown Parking Lot'), 'A2', 6.00, TRUE),
-(UUID(), (SELECT lot_id FROM parking_lots WHERE name = 'Airport Parking Lot'), 'B1', 8.00, TRUE);
+CREATE TABLE parking_spots (
+    spot_id CHAR(36) PRIMARY KEY,
+    lot_id CHAR(36) NOT NULL,
+    location VARCHAR(100),
+    price_per_hour DECIMAL(10,2) NOT NULL,
+    is_available BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (lot_id) REFERENCES parking_lots(lot_id)
+);
