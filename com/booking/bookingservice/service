@@ -1,0 +1,42 @@
+package com.booking.bookingservice.service;
+
+import com.booking.bookingservice.client.ParkingServiceClient;
+import com.booking.bookingservice.entity.Booking;
+import com.booking.bookingservice.repository.BookingRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class BookingService {
+
+    private final BookingRepository bookingRepository;
+    private final ParkingServiceClient parkingServiceClient;
+
+    public Booking createBooking(Booking booking) {
+        booking.setBookingTime(LocalDateTime.now());
+        booking.setStatus("ACTIVE");
+
+        // Mark spot as not available
+        parkingServiceClient.updateSpotAvailability(booking.getParkingSpotId(), false);
+
+        return bookingRepository.save(booking);
+    }
+
+    public List<Booking> getBookingsByUser(Long userId) {
+        return bookingRepository.findByUserId(userId);
+    }
+
+    public Booking cancelBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+        booking.setStatus("CANCELLED");
+
+        // Free up the spot
+        parkingServiceClient.updateSpotAvailability(booking.getParkingSpotId(), true);
+
+        return bookingRepository.save(booking);
+    }
+}
