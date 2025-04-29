@@ -1,0 +1,31 @@
+package com.booking.bookingservice.controller;
+
+import com.booking.bookingservice.entity.Booking;
+import com.booking.bookingservice.service.BookingService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/booking")
+@RequiredArgsConstructor
+public class BookingController {
+
+    private final BookingService bookingService;
+
+    @PostMapping
+    public Booking createBooking(@RequestBody Booking booking) {
+        return bookingService.createBooking(booking);
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<Booking> getUserBookings(@PathVariable Long userId) {
+        return bookingService.getBookingsByUser(userId);
+    }
+
+    @PutMapping("/{bookingId}/cancel")
+    public Booking cancelBooking(@PathVariable Long bookingId) {
+        return bookingService.cancelBooking(bookingId);
+    }
+}
