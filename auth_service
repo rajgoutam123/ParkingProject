@@ -10,3 +10,14 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('USER', 'ADMIN', 'LOT_MANAGER') NOT NULL
 );
+
+
+CREATE DATABASE auth_service_db;
+USE auth_service_db;
+
+CREATE TABLE users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('USER', 'ADMIN', 'LOT_MANAGER') NOT NULL
+);
