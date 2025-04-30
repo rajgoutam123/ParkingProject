@@ -13,3 +13,24 @@ CREATE TABLE bookings (
     FOREIGN KEY (user_id) REFERENCES auth_service_db.users(user_id),
     FOREIGN KEY (spot_id) REFERENCES parking_service_db.parking_spots(spot_id)
 );
+
+
+
+
+
+-- Create the database
+CREATE DATABASE IF NOT EXISTS booking_service_db;
+
+-- Use the database
+USE booking_service_db;
+
+-- Create the booking table
+CREATE TABLE IF NOT EXISTS booking (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    parking_lot_id BIGINT NOT NULL,
+    parking_spot_id BIGINT NOT NULL,
+    booking_time DATETIME NOT NULL,
+    end_time DATETIME,
+    status VARCHAR(20) NOT NULL
+);
