@@ -1,0 +1,88 @@
+{
+  "info": {
+    "name": "Booking Service",
+    "_postman_id": "booking-service-collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Booking",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 1,\n  \"slotId\": 101,\n  \"startTime\": \"2025-04-30T10:00:00\",\n  \"endTime\": \"2025-04-30T11:00:00\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8082/api/bookings",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "bookings"]
+        }
+      }
+    },
+    {
+      "name": "Get All Bookings",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8082/api/bookings",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "bookings"]
+        }
+      }
+    },
+    {
+      "name": "Get Booking by ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8082/api/bookings/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "bookings", "1"]
+        }
+      }
+    },
+    {
+      "name": "Update Booking",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 1,\n  \"slotId\": 101,\n  \"startTime\": \"2025-04-30T12:00:00\",\n  \"endTime\": \"2025-04-30T13:00:00\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8082/api/bookings/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "bookings", "1"]
+        }
+      }
+    },
+    {
+      "name": "Delete Booking",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:8082/api/bookings/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "bookings", "1"]
+        }
+      }
+    }
+  ]
+}
