@@ -11,3 +11,24 @@ CREATE TABLE payments (
     FOREIGN KEY (booking_id) REFERENCES booking_service_db.bookings(booking_id),
     FOREIGN KEY (user_id) REFERENCES auth_service_db.users(user_id)
 );
+
+CREATE DATABASE IF NOT EXISTS parking_service_db;
+USE parking_service_db;
+
+-- ParkingLot Table
+CREATE TABLE IF NOT EXISTS parking_lot (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL
+);
+
+-- ParkingSpot Table
+CREATE TABLE IF NOT EXISTS parking_spot (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    spot_number VARCHAR(100) NOT NULL,
+    available BOOLEAN NOT NULL DEFAULT TRUE,
+    parking_lot_id BIGINT NOT NULL,
+    CONSTRAINT fk_parking_lot FOREIGN KEY (parking_lot_id)
+        REFERENCES parking_lot(id)
+        ON DELETE CASCADE
+);
