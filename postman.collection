@@ -1,0 +1,55 @@
+{
+  "info": {
+    "name": "Auth Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Register User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"adkin\",\n  \"password\": \"pass123\",\n  \"role\": \"USER\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/auth/register",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "auth", "register"]
+        }
+      }
+    },
+    {
+      "name": "Login User",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/api/auth/login?username=adkin&password=pass123",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "auth", "login"],
+          "query": [
+            {
+              "key": "username",
+              "value": "adkin"
+            },
+            {
+              "key": "password",
+              "value": "pass123"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
