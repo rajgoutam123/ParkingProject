@@ -1,0 +1,212 @@
+Repository
+
+package com.booking.repository;
+
+import com.booking.entity.Booking;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+import java.util.Optional;
+
+public interface BookingRepository extends JpaRepository<Booking, Long> {
+
+    List<Booking> findByUserId(Long userId);  
+    Optional<Booking> findByIdAndUserId(Long bookingId, Long userId); // For user-specific booking fetch
+    List<Booking> findAllByStatus(String status); // For filtering by status (e.g., "ACTIVE")
+}
+
+
+service interface 
+
+package com.booking.service;
+
+import com.booking.entity.Booking;
+import java.util.List;
+
+public interface BookingService {
+
+    Booking createBooking(Booking booking);
+    List<Booking> getBookingsByUser(Long userId);
+    Booking cancelBooking(Long bookingId, Long userId);
+    Booking getBookingById(Long bookingId, Long userId);
+    List<Booking> getAllBookings();
+}
+
+
+serviceImpl 
+
+
+package com.booking.service.impl;
+
+import com.booking.client.ParkingServiceClient;
+import com.booking.entity.Booking;
+import com.booking.exception.BookingNotFoundException;
+import com.booking.exception.UnauthorizedAccessException;
+import com.booking.repository.BookingRepository;
+import com.booking.service.BookingService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class BookingServiceImpl implements BookingService {
+
+    private final BookingRepository bookingRepository;
+    private final ParkingServiceClient parkingServiceClient;
+
+    @Override
+    @Transactional
+    public Booking createBooking(Booking booking) {
+        try {
+            log.debug("Attempting to create booking for user: {}", booking.getUserId());
+            validateBooking(booking);
+
+            booking.setBookingTime(LocalDateTime.now());
+            booking.setStatus("ACTIVE");
+            parkingServiceClient.updateSpotAvailability(booking.getParkingSpotId(), false);
+
+            Booking savedBooking = bookingRepository.save(booking);
+            log.info("Booking created successfully: ID={}", savedBooking.getId());
+            return savedBooking;
+
+        } catch (Exception e) {
+            log.error("Failed to create booking: {}", e.getMessage(), e);
+            throw new RuntimeException("Booking creation failed due to: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Booking> getBookingsByUser(Long userId) {
+        log.debug("Fetching bookings for user: {}", userId);
+        return bookingRepository.findByUserId(userId);
+    }
+
+    @Override
+    @Transactional
+    public Booking cancelBooking(Long bookingId, Long userId) {
+        try {
+            log.debug("Attempting to cancel booking: ID={}", bookingId);
+            Booking booking = bookingRepository.findById(bookingId)
+                    .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
+
+            if (!booking.getUserId().equals(userId)) {
+                throw new UnauthorizedAccessException("User not authorized to cancel this booking");
+            }
+
+            booking.setStatus("CANCELLED");
+            parkingServiceClient.updateSpotAvailability(booking.getParkingSpotId(), true);
+
+            Booking cancelledBooking = bookingRepository.save(booking);
+            log.info("Booking cancelled: ID={}", cancelledBooking.getId());
+            return cancelledBooking;
+
+        } catch (Exception e) {
+            log.error("Failed to cancel booking: {}", e.getMessage(), e);
+            throw e; // Re-throw for GlobalExceptionHandler
+        }
+    }
+
+    @Override
+    public Booking getBookingById(Long bookingId, Long userId) {
+        log.debug("Fetching booking: ID={}", bookingId);
+        return bookingRepository.findByIdAndUserId(bookingId, userId)
+                .orElseThrow(() -> new BookingNotFoundException("Booking not found or access denied"));
+    }
+
+    @Override
+    public List<Booking> getAllBookings() {
+        log.debug("Fetching all bookings");
+        return bookingRepository.findAll();
+    }
+
+    // Helper method for validation
+    private void validateBooking(Booking booking) {
+        if (booking.getUserId() == null || booking.getParkingSpotId() == null) {
+            throw new IllegalArgumentException("User ID and Parking Spot ID are required");
+        }
+    }
+}
+
+
+Controller layer 
+
+
+package com.booking.controller;
+
+import com.booking.entity.Booking;
+import com.booking.service.BookingService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/booking")
+@RequiredArgsConstructor
+@Tag(name = "Booking Controller", description = "APIs for managing parking spot bookings")
+public class BookingController {
+
+    private final BookingService bookingService;
+
+    @PostMapping
+    @Operation(summary = "Create a new booking")
+    public Booking createBooking(
+            @RequestBody @Valid Booking booking,
+            @RequestHeader("X-User-Id") Long userId) {
+        booking.setUserId(userId);
+        return bookingService.createBooking(booking);
+    }
+
+    @GetMapping("/user")
+    @Operation(summary = "Get bookings for the current user")
+    public List<Booking> getUserBookings(@RequestHeader("X-User-Id") Long userId) {
+        return bookingService.getBookingsByUser(userId);
+    }
+
+    @PutMapping("/{bookingId}/cancel")
+    @Operation(summary = "Cancel a booking")
+    public Booking cancelBooking(
+            @PathVariable Long bookingId,
+            @RequestHeader("X-User-Id") Long userId) {
+        return bookingService.cancelBooking(bookingId, userId);
+    }
+
+    @GetMapping("/{bookingId}")
+    @Operation(summary = "Get booking by ID")
+    public Booking getBookingById(
+            @PathVariable Long bookingId,
+            @RequestHeader("X-User-Id") Long userId) {
+        return bookingService.getBookingById(bookingId, userId);
+    }
+
+    @GetMapping("/all")
+    @Operation(summary = "Get all bookings (Admin only)")
+    public List<Booking> getAllBookings(@RequestHeader("X-User-Role") String role) {
+        if (!"ADMIN".equals(role)) throw new UnauthorizedAccessException("Access denied");
+        return bookingService.getAllBookings();
+    }
+}
+
+
+
+How to Test?
+Swagger UI:
+
+Access http://localhost:8083/swagger-ui.html.
+
+Headers:
+
+X-User-Id: 123  
+X-User-Role: USER/ADMIN  
+Postman:
+
+Include headers in requests to simulate API Gateway JWT propagation.
+
