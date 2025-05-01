@@ -93,15 +93,14 @@ public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
             .route("auth-service", r -> r.path("/api/auth/**")
                     .filters(f -> f.addRequestHeader("X-User-Id", "${X-User-Id}")
                                  .addRequestHeader("X-User-Role", "${X-User-Role}"))
-                    .uri("http://localhost:8083"))
+                    .uri("lb://auth-service")) // "lb://" = Load-balanced via Eureka
             .route("booking-service", r -> r.path("/api/booking/**")
                     .filters(f -> f.addRequestHeader("X-User-Id", "${X-User-Id}")
                                  .addRequestHeader("X-User-Role", "${X-User-Role}"))
-                    .uri("http://localhost:8081"))
+                    .uri("lb://booking-service"))
             .route("parking-service", r -> r.path("/api/parking/**")
                     .filters(f -> f.addRequestHeader("X-User-Id", "${X-User-Id}")
                                  .addRequestHeader("X-User-Role", "${X-User-Role}"))
-                    .uri("http://localhost:8082"))
+                    .uri("lb://parking-service"))
             .build();
 }
-
