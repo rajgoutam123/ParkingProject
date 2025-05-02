@@ -31,3 +31,27 @@ public class User {
     @Pattern(regexp = "^(USER|ADMIN|LOT_MANAGER)$", message = "Role must be either USER, ADMIN, or LOT_MANAGER")
     private String role;
 }
+
+
+
+
+<!-- Bean Validation API -->
+<dependency>
+    <groupId>jakarta.validation</groupId>
+    <artifactId>jakarta.validation-api</artifactId>
+    <version>3.0.2</version>
+</dependency>
+
+<!-- Hibernate Validator (implementation) -->
+<dependency>
+    <groupId>org.hibernate.validator</groupId>
+    <artifactId>hibernate-validator</artifactId>
+    <version>8.0.1.Final</version>
+</dependency>
+
+<!-- For Jakarta EE 9+ compatibility -->
+<dependency>
+    <groupId>org.glassfish.expressly</groupId>
+    <artifactId>expressly</artifactId>
+    <version>5.0.0</version>
+</dependency>
